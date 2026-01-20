@@ -176,7 +176,8 @@ export default function EditEventPage({ params }: Props) {
         throw new Error('You must be logged in to edit an event')
       }
 
-      if (!eventId) {
+      // Strict type guard for TypeScript
+      if (typeof eventId !== 'string') {
         throw new Error('Event ID is required')
       }
 
@@ -184,7 +185,7 @@ export default function EditEventPage({ params }: Props) {
       const { data: existingEvent, error: fetchError } = await supabase
         .from('events')
         .select('organizer_id, image_url')
-        .eq('id', eventId as string)
+        .eq('id', eventId)
         .single()
 
       if (fetchError || !existingEvent) {
@@ -245,7 +246,7 @@ export default function EditEventPage({ params }: Props) {
           category: formData.category,
           image_url: newImageUrl
         } as never)
-        .eq('id', eventId as string)
+        .eq('id', eventId)
         .eq('organizer_id', user.id) // Extra security check
 
       if (updateError) {
