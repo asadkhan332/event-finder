@@ -17,7 +17,7 @@ const Hero = () => {
 
         {/* 2. Hero Content */}
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 tracking-tight drop-shadow-lg font-['Playfair_Display',serif]">
+          <h1 className="text-3xl md:text-6xl font-bold text-white mb-4 tracking-tight drop-shadow-lg font-['Playfair_Display',serif]">
             Discover Pakistan's Vibrant Events
           </h1>
           <p className="text-lg md:text-xl text-gray-200 max-w-2xl drop-shadow-md font-medium font-['Inter',sans-serif]">
@@ -27,8 +27,8 @@ const Hero = () => {
       </div>
 
       {/* 3. Floating Search Widget - Premium Look */}
-      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[90%] max-w-4xl">
-        <div className="bg-white p-3 md:p-4 rounded-full md:rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-teal-200 backdrop-blur-md flex flex-col md:flex-row items-center gap-3">
+      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[95%] md:w-[90%] max-w-4xl">
+        <div className="bg-white p-3 md:p-4 px-4 md:px-4 rounded-2xl md:rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-teal-200 backdrop-blur-md flex flex-col md:flex-row items-center gap-3">
 
           {/* Keyword Search */}
           <div className="flex items-center flex-1 w-full px-4 border-b md:border-b-0 md:border-r border-gray-100 dark:border-gray-800">
