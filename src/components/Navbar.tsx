@@ -56,8 +56,7 @@ export default function Navbar() {
           })
 
           // Fetch profile
-          const { data: profileData } = await supabase
-            .from('profiles')
+          const { data: profileData } = await (supabase.from('profiles') as any)
             .select('full_name, avatar_url')
             .eq('id', currentSession.user.id)
             .single()

@@ -149,8 +149,7 @@ export default function ProfilePage() {
         .getPublicUrl(filePath)
 
       // Update profile with new avatar URL
-      const { error: updateError } = await supabase
-        .from('profiles')
+      const { error: updateError } = await (supabase.from('profiles') as any)
         .update({ avatar_url: publicUrl, updated_at: new Date().toISOString() })
         .eq('id', user.id)
 
