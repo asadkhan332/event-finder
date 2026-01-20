@@ -2,7 +2,7 @@ import React from 'react';
 
 const Hero = () => {
   return (
-    <div className="relative w-full">
+    <div className="relative w-full overflow-x-hidden">
       {/* 1. Background Section - Karachi Vibe */}
       <div className="relative h-[400px] md:h-[500px] w-full overflow-hidden">
         <div
@@ -27,8 +27,8 @@ const Hero = () => {
       </div>
 
       {/* 3. Floating Search Widget - Premium Look */}
-      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[95%] md:w-[90%] max-w-4xl">
-        <div className="bg-white p-3 md:p-4 px-4 md:px-4 rounded-2xl md:rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-teal-200 backdrop-blur-md flex flex-col md:flex-row items-center gap-3">
+      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[92vw] md:w-auto md:min-w-[90%] max-w-4xl overflow-hidden">
+        <div className="bg-white p-3 md:p-4 px-4 md:px-4 rounded-2xl md:rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-teal-200 backdrop-blur-md flex flex-col md:flex-row items-center gap-3 overflow-hidden">
 
           {/* Keyword Search */}
           <div className="flex items-center flex-1 w-full px-4 border-b md:border-b-0 md:border-r border-gray-100 dark:border-gray-800">
