@@ -184,7 +184,7 @@ export default function EditEventPage({ params }: Props) {
       const { data: existingEvent, error: fetchError } = await supabase
         .from('events')
         .select('organizer_id, image_url')
-        .eq('id', String(eventId))
+        .eq('id', eventId as string)
         .single()
 
       if (fetchError || !existingEvent) {
@@ -245,7 +245,7 @@ export default function EditEventPage({ params }: Props) {
           category: formData.category,
           image_url: newImageUrl
         } as never)
-        .eq('id', String(eventId))
+        .eq('id', eventId as string)
         .eq('organizer_id', user.id) // Extra security check
 
       if (updateError) {
@@ -279,6 +279,19 @@ export default function EditEventPage({ params }: Props) {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 mb-4">{error}</p>
+          <Link href="/" className="text-blue-600 hover:text-blue-800">
+            Return to Home
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  if (!eventId) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-red-600 mb-4">Error: Invalid Event ID</p>
           <Link href="/" className="text-blue-600 hover:text-blue-800">
             Return to Home
           </Link>
