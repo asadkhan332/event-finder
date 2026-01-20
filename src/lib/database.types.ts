@@ -24,13 +24,26 @@ export type Event = {
   updated_at: string
 }
 
-export type RSVP = {
+
+export type Review = {
   id: string
   user_id: string
   event_id: string
-  status: 'going' | 'interested' | 'not_going'
+  rating: number
+  comment: string | null
   created_at: string
   updated_at: string
+}
+
+export type ReviewWithProfile = Review & {
+  profile: Pick<Profile, 'full_name' | 'email' | 'avatar_url'> | null
+}
+
+export type Attendee = {
+  id: string
+  user_id: string
+  event_id: string
+  created_at: string
 }
 
 export type EventInsert = {
@@ -67,10 +80,15 @@ export type Database = {
         Insert: EventInsert
         Update: Partial<Omit<Event, 'id' | 'created_at' | 'updated_at'>>
       }
-      rsvps: {
-        Row: RSVP
-        Insert: Omit<RSVP, 'id' | 'created_at' | 'updated_at'>
-        Update: Partial<Omit<RSVP, 'id' | 'created_at' | 'updated_at'>>
+      attendees: {
+        Row: Attendee
+        Insert: Omit<Attendee, 'id' | 'created_at' | 'updated_at'>
+        Update: Partial<Omit<Attendee, 'id' | 'created_at' | 'updated_at'>>
+      }
+      reviews: {
+        Row: Review
+        Insert: Omit<Review, 'id' | 'created_at' | 'updated_at'>
+        Update: Partial<Omit<Review, 'id' | 'created_at' | 'updated_at'>>
       }
     }
   }

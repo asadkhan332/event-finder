@@ -1,6 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import { Event } from '@/lib/database.types'
-import Navbar from '@/components/Navbar'
+import Hero from '@/components/Hero'
 import EventFilters from '@/components/EventFilters'
 import FeaturedEvents from '@/components/FeaturedEvents'
 import EventList from '@/components/EventList'
@@ -127,23 +127,23 @@ export default async function Home({ searchParams }: Props) {
   ])
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
+    <div className="min-h-screen bg-background transition-colors">
+      <Hero />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
         {/* Featured Events Section - only show when no filters are active */}
         {!hasFilters && featuredEvents.length > 0 && (
           <FeaturedEvents events={featuredEvents} />
         )}
 
-        <Suspense fallback={<div className="bg-white rounded-lg shadow-md p-4 mb-6 h-20 animate-pulse" />}>
+        <Suspense fallback={<div className="bg-white dark:bg-dark-card rounded-lg shadow-md p-4 mb-6 h-20 animate-pulse" />}>
           <EventFilters />
         </Suspense>
 
         {events.length === 0 ? (
           <div className="text-center py-16">
             <svg
-              className="mx-auto h-16 w-16 text-gray-400"
+              className="mx-auto h-16 w-16 text-gray-400 dark:text-gray-500"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -157,15 +157,15 @@ export default async function Home({ searchParams }: Props) {
             </svg>
             {hasFilters ? (
               <>
-                <h2 className="mt-4 text-xl font-semibold text-gray-900">No events found</h2>
-                <p className="mt-2 text-gray-600">
+                <h2 className="mt-4 text-xl font-semibold text-gray-900 dark:text-gray-100">No events found</h2>
+                <p className="mt-2 text-gray-600 dark:text-gray-400">
                   Try adjusting your search or filters to find what you&apos;re looking for.
                 </p>
               </>
             ) : (
               <>
-                <h2 className="mt-4 text-xl font-semibold text-gray-900">No events yet</h2>
-                <p className="mt-2 text-gray-600">
+                <h2 className="mt-4 text-xl font-semibold text-gray-900 dark:text-gray-100">No events yet</h2>
+                <p className="mt-2 text-gray-600 dark:text-gray-400">
                   Check back later or create your own event!
                 </p>
               </>
@@ -175,17 +175,17 @@ export default async function Home({ searchParams }: Props) {
           <>
             {hasFilters ? (
               <div className="flex items-center gap-2 mb-4">
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 dark:text-gray-400">
                   Found {events.length} event{events.length !== 1 ? 's' : ''}
                 </p>
                 {isNearbyMode && (
-                  <span className="text-sm text-blue-600 font-medium">
+                  <span className="text-sm text-blue-600 dark:text-blue-400 font-medium">
                     (sorted by distance)
                   </span>
                 )}
               </div>
             ) : featuredEvents.length > 0 ? (
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">All Events</h2>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">All Events</h2>
             ) : null}
             <EventList
               events={events}

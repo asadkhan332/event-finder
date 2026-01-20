@@ -1,20 +1,9 @@
 'use client';
 
+import { useMemo } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-
-// Fix for Leaflet marker icon issue in Next.js
-// The default marker icons don't load properly due to webpack bundling
-const customIcon = L.icon({
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-});
 
 // Karachi center coordinates
 const KARACHI_CENTER: [number, number] = [24.8607, 67.0011];
@@ -30,6 +19,18 @@ export default function EventMap({
   longitude,
   eventTitle = 'Event Location'
 }: EventMapProps) {
+  // Create icon inside component to avoid SSR issues
+  // L.icon() requires window which isn't available during SSR
+  const customIcon = useMemo(() => L.icon({
+    iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+    iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+    shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    shadowSize: [41, 41],
+  }), []);
+
   // Use provided coordinates or default to Karachi center
   const position: [number, number] = [
     latitude ?? KARACHI_CENTER[0],

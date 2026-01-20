@@ -82,42 +82,35 @@ CREATE POLICY "Users can delete their own events"
     USING (auth.uid() = organizer_id);
 
 -- ============================================
--- RSVPS TABLE
+-- ATTENDEES TABLE
 -- ============================================
-CREATE TABLE rsvps (
+CREATE TABLE attendees (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     event_id UUID NOT NULL REFERENCES events(id) ON DELETE CASCADE,
-    status TEXT NOT NULL CHECK (status IN ('going', 'interested', 'not_going')),
     created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
     UNIQUE(user_id, event_id)
 );
 
--- Create indexes for rsvps
-CREATE INDEX rsvps_user_id_idx ON rsvps(user_id);
-CREATE INDEX rsvps_event_id_idx ON rsvps(event_id);
-CREATE INDEX rsvps_status_idx ON rsvps(status);
+-- Create indexes for attendees
+CREATE INDEX attendees_user_id_idx ON attendees(user_id);
+CREATE INDEX attendees_event_id_idx ON attendees(event_id);
 
--- Enable RLS on rsvps
-ALTER TABLE rsvps ENABLE ROW LEVEL SECURITY;
+-- Enable RLS on attendees
+ALTER TABLE attendees ENABLE ROW LEVEL SECURITY;
 
--- RSVPs policies
-CREATE POLICY "RSVPs are viewable by everyone"
-    ON rsvps FOR SELECT
+-- Attendees policies
+CREATE POLICY "Attendees are viewable by everyone"
+    ON attendees FOR SELECT
     USING (true);
 
-CREATE POLICY "Authenticated users can create their own RSVPs"
-    ON rsvps FOR INSERT
+CREATE POLICY "Authenticated users can create their own attendance"
+    ON attendees FOR INSERT
     WITH CHECK (auth.uid() = user_id);
 
-CREATE POLICY "Users can update their own RSVPs"
-    ON rsvps FOR UPDATE
-    USING (auth.uid() = user_id)
-    WITH CHECK (auth.uid() = user_id);
-
-CREATE POLICY "Users can delete their own RSVPs"
-    ON rsvps FOR DELETE
+CREATE POLICY "Users can delete their own attendance"
+    ON attendees FOR DELETE
     USING (auth.uid() = user_id);
 
 -- ============================================
@@ -144,8 +137,8 @@ CREATE TRIGGER update_events_updated_at
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
-CREATE TRIGGER update_rsvps_updated_at
-    BEFORE UPDATE ON rsvps
+CREATE TRIGGER update_attendees_updated_at
+    BEFORE UPDATE ON attendees
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 

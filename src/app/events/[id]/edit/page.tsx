@@ -176,18 +176,24 @@ export default function EditEventPage({ params }: Props) {
         throw new Error('You must be logged in to edit an event')
       }
 
+      if (!eventId) {
+        throw new Error('Event ID is required')
+      }
+
       // Re-verify ownership before updating
       const { data: existingEvent, error: fetchError } = await supabase
         .from('events')
         .select('organizer_id, image_url')
-        .eq('id', eventId)
+        .eq('id', String(eventId))
         .single()
 
       if (fetchError || !existingEvent) {
         throw new Error('Event not found')
       }
 
-      if (existingEvent.organizer_id !== user.id) {
+      const typedExistingEvent = existingEvent as { organizer_id: string; image_url: string | null }
+
+      if (typedExistingEvent.organizer_id !== user.id) {
         throw new Error('You do not have permission to edit this event')
       }
 
@@ -238,8 +244,8 @@ export default function EditEventPage({ params }: Props) {
           location_name: formData.location_name,
           category: formData.category,
           image_url: newImageUrl
-        })
-        .eq('id', eventId)
+        } as never)
+        .eq('id', String(eventId))
         .eq('organizer_id', user.id) // Extra security check
 
       if (updateError) {

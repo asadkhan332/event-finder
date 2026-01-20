@@ -22,7 +22,7 @@ A web application to discover and manage local events, built with Next.js, Tailw
 - [x] EventCard component
 - [x] Sample events seed data (8 events)
 - [x] Event detail page (/events/[id])
-- [x] RSVPButton component (with full database integration)
+- [x] AttendeeButton component (with full database integration)
 - [x] Event creation form (/events/new)
 - [x] Navigation bar with Create Event button
 - [x] Authentication pages (Login/Signup)
@@ -66,13 +66,12 @@ A web application to discover and manage local events, built with Next.js, Tailw
 | created_at    | TIMESTAMPTZ  | Record creation timestamp      |
 | updated_at    | TIMESTAMPTZ  | Record update timestamp        |
 
-### rsvps
+### attendees
 | Column     | Type        | Description                         |
 |------------|-------------|-------------------------------------|
 | id         | UUID (PK)   | Auto-generated                      |
 | user_id    | UUID (FK)   | References profiles(id)             |
 | event_id   | UUID (FK)   | References events(id)               |
-| status     | TEXT        | 'going', 'interested', 'not_going'  |
 | created_at | TIMESTAMPTZ | Record creation timestamp           |
 | updated_at | TIMESTAMPTZ | Record update timestamp             |
 
@@ -85,6 +84,8 @@ event-finder/
 │   │   ├── layout.tsx
 │   │   ├── page.tsx            # Event list page
 │   │   ├── globals.css
+│   │   ├── dashboard/
+│   │   │   └── page.tsx        # Organizer dashboard
 │   │   ├── login/
 │   │   │   └── page.tsx        # Login page
 │   │   ├── signup/
@@ -103,7 +104,7 @@ event-finder/
 │   │   ├── FeaturedEvents.tsx  # Featured events carousel
 │   │   ├── EditEventButton.tsx # Edit button (organizer only)
 │   │   ├── DeleteEventButton.tsx # Delete button component
-│   │   └── RSVPButton.tsx      # RSVP button component
+│   │   └── AttendeeButton.tsx      # Attendee button component
 │   ├── hooks/
 │   │   └── useGeolocation.ts   # Browser geolocation hook
 │   └── lib/
