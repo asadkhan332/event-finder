@@ -130,7 +130,7 @@ export default async function Home({ searchParams }: Props) {
     <div className="min-h-screen bg-background transition-colors">
       <Hero />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Featured Events Section - only show when no filters are active */}
         {!hasFilters && featuredEvents.length > 0 && (
           <FeaturedEvents events={featuredEvents} />
