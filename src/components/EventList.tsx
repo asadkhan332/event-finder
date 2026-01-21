@@ -4,6 +4,7 @@ import { useMemo } from 'react'
 import { Event } from '@/lib/database.types'
 import { calculateDistance } from '@/lib/location'
 import EventCard from './EventCard'
+import MobileEventCard from './MobileEventCard'
 
 type EventWithDistance = Event & { distance?: number }
 
@@ -84,14 +85,28 @@ export default function EventList({ events, userLat, userLng, maxDistance }: Eve
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      {eventsWithDistance.map((event) => (
-        <EventCard
-          key={event.id}
-          event={event}
-          distance={userLat && userLng ? event.distance : undefined}
-        />
-      ))}
-    </div>
+    <>
+      {/* Mobile View - Vertical List */}
+      <div className="flex flex-col space-y-3 md:hidden">
+        {eventsWithDistance.map((event) => (
+          <MobileEventCard
+            key={event.id}
+            event={event}
+            distance={userLat && userLng ? event.distance : undefined}
+          />
+        ))}
+      </div>
+
+      {/* Desktop View - Grid Layout */}
+      <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        {eventsWithDistance.map((event) => (
+          <EventCard
+            key={event.id}
+            event={event}
+            distance={userLat && userLng ? event.distance : undefined}
+          />
+        ))}
+      </div>
+    </>
   )
 }
