@@ -153,14 +153,14 @@ const EventFilters = () => {
       </div>
 
       {/* Category Filters */}
-      <div className="w-full py-8">
-        <h2 className="text-xl font-bold text-foreground mb-6 flex items-center">
-          <span className="w-2 h-8 bg-teal-500 rounded-full mr-3"></span>
+      <div className="w-full py-6 md:py-8">
+        <h2 className="text-lg md:text-xl font-bold text-foreground mb-4 md:mb-6 flex items-center">
+          <span className="w-1.5 md:w-2 h-6 md:h-8 bg-teal-500 rounded-full mr-2 md:mr-3"></span>
           Explore by Category
         </h2>
 
-        {/* Category Grid - Wraps on mobile, scrolls on desktop */}
-        <div className="flex flex-wrap justify-center gap-3 md:flex-nowrap md:overflow-x-auto md:pb-4 md:gap-4 md:no-scrollbar">
+        {/* Pill Buttons - Horizontal scroll on mobile */}
+        <div className="flex overflow-x-auto whitespace-nowrap gap-2 md:gap-3 pb-2 scrollbar-hide">
           {categories.map((cat) => {
             const isActive = category === cat.id;
 
@@ -169,71 +169,14 @@ const EventFilters = () => {
                 key={cat.id}
                 onClick={() => handleCategoryChange(cat.id)}
                 className={`
-                  flex flex-col items-center justify-center
-                  h-20 w-20 md:h-24 md:w-24 md:flex-shrink-0 rounded-2xl md:rounded-3xl transition-all duration-300
+                  flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200
                   ${isActive
-                    ? `${cat.activeBg} dark:bg-[#1A1A1A] text-gray-800 dark:text-gray-200 shadow-lg scale-105 border-2 ${cat.activeBorder} dark:border-gray-600`
-                    : `bg-white dark:bg-[#1A1A1A] text-gray-600 hover:shadow-lg dark:hover:bg-gray-800 border-2 ${cat.borderColor} dark:border-gray-700`
+                    ? 'bg-teal-500 text-white shadow-md'
+                    : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600 hover:border-teal-500 hover:text-teal-500'
                   }
                 `}
               >
-                <div className={`p-2 md:p-3 rounded-xl md:rounded-2xl mb-1 md:mb-2 ${cat.iconBg}`}>
-                  <div className="w-5 h-5 md:w-6 md:h-6">
-                    {cat.id === 'music' && (
-                      <svg fill="#6B21A8" viewBox="0 0 24 24">
-                        <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
-                      </svg>
-                    )}
-                    {cat.id === 'food' && (
-                      <svg fill="#C2410C" viewBox="0 0 24 24">
-                        <path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"/>
-                      </svg>
-                    )}
-                    {cat.id === 'tech' && (
-                      <svg fill="#1E40AF" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                      </svg>
-                    )}
-                    {cat.id === 'arts' && (
-                      <svg fill="#BE185D" viewBox="0 0 24 24">
-                        <path d="M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z"/>
-                      </svg>
-                    )}
-                    {cat.id === 'sports' && (
-                      <svg fill="#047857" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8 0-1.85.63-3.55 1.69-4.9L16.9 18.31C15.55 19.37 13.85 20 12 20zm6.31-3.1L7.1 5.69C8.45 4.63 10.15 4 12 4c4.42 0 8 3.58 8 8 0 1.85-.63 3.55-1.69 4.9z"/>
-                      </svg>
-                    )}
-                    {cat.id === 'theater' && (
-                      <svg fill="#B91C1C" viewBox="0 0 24 24">
-                        <path d="M8.5 7V1h1v6h-1V7z"/>
-                        <path d="M11.5 7V1h1v6h-1V7z"/>
-                        <path d="M14.5 7V1h1v6h-1V7z"/>
-                        <path d="M7.5 10v6h-1V9h7v7h-1v-6h-5z"/>
-                        <path d="M16.5 10v6h-1V9h1v1z"/>
-                        <path d="M12 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-3-3c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
-                      </svg>
-                    )}
-                    {cat.id === 'photography' && (
-                      <svg fill="#3730A3" viewBox="0 0 24 24">
-                        <path d="M9 2 7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
-                      </svg>
-                    )}
-                    {cat.id === 'social' && (
-                      <svg fill="#A16207" viewBox="0 0 24 24">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
-                      </svg>
-                    )}
-                    {cat.id === 'all' && (
-                      <svg fill="#0F766E" viewBox="0 0 24 24">
-                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                      </svg>
-                    )}
-                  </div>
-                </div>
-                <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider leading-tight text-center px-1">
-                  {cat.name}
-                </span>
+                {cat.name}
               </button>
             );
           })}

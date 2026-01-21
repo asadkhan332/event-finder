@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/context/ThemeContext";
 import Navbar from "@/components/Navbar";
+import BottomNav from "@/components/BottomNav";
+import MobileHeader from "@/components/MobileHeader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,10 +32,18 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground transition-colors`}
       >
         <ThemeProvider>
-          <Navbar />
-          <main>
+          {/* Mobile Header - only visible on mobile */}
+          <MobileHeader />
+          {/* Desktop Navbar - hidden on mobile */}
+          <div className="hidden md:block">
+            <Navbar />
+          </div>
+          {/* Main content with mobile padding for header and bottom nav */}
+          <main className="pt-14 pb-20 md:pt-0 md:pb-0">
             {children}
           </main>
+          {/* Bottom Navigation - only visible on mobile */}
+          <BottomNav />
         </ThemeProvider>
       </body>
     </html>
