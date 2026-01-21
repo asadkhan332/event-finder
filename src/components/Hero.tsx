@@ -16,19 +16,19 @@ const Hero = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-[#fbbf24] to-[#ea580c] opacity-80" />
 
         {/* 2. Hero Content */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-          <h1 className="text-3xl md:text-6xl font-bold text-white mb-4 tracking-tight drop-shadow-lg font-['Playfair_Display',serif]">
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 pb-16 md:pb-12">
+          <h1 className="text-3xl md:text-6xl font-bold text-white mb-4 tracking-tight drop-shadow-lg font-['Playfair_Display',serif] max-w-[90%] md:max-w-none">
             Discover Pakistan's Vibrant Events
           </h1>
-          <p className="text-lg md:text-xl text-gray-200 max-w-2xl drop-shadow-md font-medium font-['Inter',sans-serif]">
+          <p className="text-base md:text-xl text-gray-200 max-w-2xl drop-shadow-md font-medium font-['Inter',sans-serif] mb-8">
             Your gateway to cultural festivals, tech meetups, concerts, and more across the nation.
           </p>
         </div>
       </div>
 
       {/* 3. Floating Search Widget - Premium Look */}
-      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[92vw] md:w-auto md:min-w-[90%] max-w-4xl overflow-hidden">
-        <div className="bg-white p-3 md:p-4 px-4 md:px-4 rounded-2xl md:rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-teal-200 backdrop-blur-md flex flex-col md:flex-row items-center gap-3 overflow-hidden">
+      <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[92%] max-w-md md:max-w-4xl md:w-auto md:min-w-[90%] mx-auto overflow-hidden">
+        <div className="bg-white p-6 md:p-8 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-teal-200 backdrop-blur-md flex flex-col md:flex-row items-center gap-4 md:gap-3 overflow-hidden">
 
           {/* Keyword Search */}
           <div className="flex items-center flex-1 w-full px-4 border-b md:border-b-0 md:border-r border-gray-100 dark:border-gray-800">
@@ -64,7 +64,7 @@ const Hero = () => {
           </div>
 
           {/* Find Button */}
-          <button className="bg-teal-500 text-white px-8 py-3 rounded-full md:rounded-xl font-bold hover:bg-teal-600 transition-colors w-full md:w-auto">
+          <button className="bg-teal-500 text-white px-8 py-3 rounded-lg font-bold hover:bg-teal-600 transition-colors w-full md:w-auto">
             Find Events
           </button>
         </div>
