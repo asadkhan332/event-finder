@@ -6,6 +6,11 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { Eye, EyeOff, Calendar, MapPin, Users } from 'lucide-react'
 
+const getURL = () => {
+  let url = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://event-finder-tnfr.vercel.app'
+  return url
+}
+
 function LoginContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -97,7 +102,7 @@ function LoginContent() {
       const { error: googleError } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: 'http://localhost:3000/auth/callback'
+          redirectTo: `${getURL()}/auth/callback`
         }
       })
 
