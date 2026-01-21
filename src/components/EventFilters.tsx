@@ -159,8 +159,8 @@ const EventFilters = () => {
           Explore by Category
         </h2>
 
-        {/* Horizontal Scrollable Grid */}
-        <div className="flex overflow-x-auto pb-4 gap-4 no-scrollbar">
+        {/* Category Grid - Wraps on mobile, scrolls on desktop */}
+        <div className="flex flex-wrap justify-center gap-3 md:flex-nowrap md:overflow-x-auto md:pb-4 md:gap-4 md:no-scrollbar">
           {categories.map((cat) => {
             const isActive = category === cat.id;
 
@@ -169,16 +169,16 @@ const EventFilters = () => {
                 key={cat.id}
                 onClick={() => handleCategoryChange(cat.id)}
                 className={`
-                  flex-shrink-0 flex flex-col items-center justify-center
-                  w-28 h-28 rounded-3xl transition-all duration-300
+                  flex flex-col items-center justify-center
+                  h-20 w-20 md:h-24 md:w-24 md:flex-shrink-0 rounded-2xl md:rounded-3xl transition-all duration-300
                   ${isActive
                     ? `${cat.activeBg} dark:bg-[#1A1A1A] text-gray-800 dark:text-gray-200 shadow-lg scale-105 border-2 ${cat.activeBorder} dark:border-gray-600`
                     : `bg-white dark:bg-[#1A1A1A] text-gray-600 hover:shadow-lg dark:hover:bg-gray-800 border-2 ${cat.borderColor} dark:border-gray-700`
                   }
                 `}
               >
-                <div className={`p-3 rounded-2xl mb-2 ${cat.iconBg}`}>
-                  <div className="w-6 h-6">
+                <div className={`p-2 md:p-3 rounded-xl md:rounded-2xl mb-1 md:mb-2 ${cat.iconBg}`}>
+                  <div className="w-5 h-5 md:w-6 md:h-6">
                     {cat.id === 'music' && (
                       <svg fill="#6B21A8" viewBox="0 0 24 24">
                         <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
@@ -231,7 +231,7 @@ const EventFilters = () => {
                     )}
                   </div>
                 </div>
-                <span className="text-xs font-bold uppercase tracking-wider">
+                <span className="text-[10px] md:text-xs font-bold uppercase tracking-wider leading-tight text-center px-1">
                   {cat.name}
                 </span>
               </button>

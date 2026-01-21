@@ -16,11 +16,11 @@ const Hero = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-[#fbbf24] to-[#ea580c] opacity-80" />
 
         {/* 2. Hero Content */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 pb-16 md:pb-12">
-          <h1 className="text-3xl md:text-6xl font-bold text-white mb-4 tracking-tight drop-shadow-lg font-['Playfair_Display',serif] max-w-[90%] md:max-w-none">
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4 pb-20 md:pb-12">
+          <h1 className="text-3xl md:text-6xl font-bold text-white mb-3 md:mb-4 tracking-tight drop-shadow-lg font-['Playfair_Display',serif] max-w-[90%] md:max-w-none">
             Discover Pakistan's Vibrant Events
           </h1>
-          <p className="text-base md:text-xl text-gray-200 max-w-2xl drop-shadow-md font-medium font-['Inter',sans-serif] mb-8">
+          <p className="text-base md:text-xl text-gray-200 max-w-[85%] md:max-w-2xl drop-shadow-md font-medium font-['Inter',sans-serif] pb-4">
             Your gateway to cultural festivals, tech meetups, concerts, and more across the nation.
           </p>
         </div>
@@ -28,7 +28,7 @@ const Hero = () => {
 
       {/* 3. Floating Search Widget - Premium Look */}
       <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 w-[92%] max-w-md md:max-w-4xl md:w-auto md:min-w-[90%] mx-auto overflow-hidden">
-        <div className="bg-white p-6 md:p-8 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-teal-200 backdrop-blur-md flex flex-col md:flex-row items-center gap-4 md:gap-3 overflow-hidden">
+        <div className="bg-white p-4 md:p-8 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-teal-200 backdrop-blur-md flex flex-col md:flex-row items-center gap-3 md:gap-3 overflow-hidden">
 
           {/* Keyword Search */}
           <div className="flex items-center flex-1 w-full px-4 border-b md:border-b-0 md:border-r border-gray-100 dark:border-gray-800">
