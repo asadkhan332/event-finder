@@ -183,24 +183,24 @@ export default function Navbar() {
                     </svg>
                   </button>
 
-                  {/* Dropdown Menu - Professional White Theme */}
+                  {/* Dropdown Menu - Premium SaaS Dashboard Style */}
                   {isDropdownOpen && (
-                    <div className="absolute right-0 w-64 mt-2 origin-top-right bg-white rounded-xl shadow-[0_10px_40px_-15px_rgba(0,0,0,0.2)] ring-1 ring-black ring-opacity-5 focus:outline-none overflow-hidden">
+                    <div className="absolute right-0 w-64 mt-2 origin-top-right bg-white rounded-2xl shadow-2xl ring-1 ring-black/5 focus:outline-none overflow-hidden">
                       {/* Header Section with Avatar, Name, Email */}
-                      <div className="flex items-center p-4 border-b border-gray-100">
+                      <div className="flex items-center p-4 border-b border-gray-100 bg-gradient-to-r from-orange-50 to-amber-50">
                         {avatarUrl ? (
                           <img
                             src={avatarUrl}
                             alt="Profile"
-                            className="w-10 h-10 rounded-full object-cover border-2 border-orange-200"
+                            className="w-11 h-11 rounded-full object-cover border-2 border-orange-300 shadow-md"
                           />
                         ) : (
-                          <div className="w-10 h-10 bg-gradient-to-br from-[#FBBF24] to-[#F97316] rounded-full flex items-center justify-center text-white text-sm font-bold">
+                          <div className="w-11 h-11 bg-gradient-to-br from-[#FBBF24] to-[#F97316] rounded-full flex items-center justify-center text-white text-sm font-bold shadow-md">
                             {userName?.charAt(0).toUpperCase() || session.user.email?.charAt(0).toUpperCase() || 'U'}
                           </div>
                         )}
                         <div className="ml-3 flex-1 min-w-0">
-                          <p className="font-medium text-gray-900 truncate">
+                          <p className="font-semibold text-gray-900 truncate">
                             {userName || 'User'}
                           </p>
                           <p className="text-sm text-gray-500 truncate">
@@ -210,11 +210,11 @@ export default function Navbar() {
                       </div>
 
                       {/* Menu Items */}
-                      <div className="py-1">
+                      <div className="py-2">
                         <Link
                           href="/profile"
                           onClick={closeMenus}
-                          className="group flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                          className="group flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-orange-50 transition-all duration-200"
                         >
                           <User className="mr-3 h-5 w-5 text-gray-400 group-hover:text-orange-500 transition-colors" />
                           Profile
@@ -223,19 +223,28 @@ export default function Navbar() {
                         <Link
                           href="/dashboard"
                           onClick={closeMenus}
-                          className="group flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                          className="group flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-orange-50 transition-all duration-200"
                         >
-                          <LayoutDashboard className="mr-3 h-5 w-5 text-gray-400 group-hover:text-orange-500 transition-colors" />
-                          Dashboard
+                          <Calendar className="mr-3 h-5 w-5 text-gray-400 group-hover:text-orange-500 transition-colors" />
+                          My Events
                         </Link>
 
                         <Link
                           href="/events/new"
                           onClick={closeMenus}
-                          className="group flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                          className="group flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-orange-50 transition-all duration-200"
                         >
                           <Plus className="mr-3 h-5 w-5 text-gray-400 group-hover:text-orange-500 transition-colors" />
                           Create Event
+                        </Link>
+
+                        <Link
+                          href="/profile"
+                          onClick={closeMenus}
+                          className="group flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-orange-50 transition-all duration-200"
+                        >
+                          <Settings className="mr-3 h-5 w-5 text-gray-400 group-hover:text-orange-500 transition-colors" />
+                          Settings
                         </Link>
                       </div>
 
@@ -243,7 +252,7 @@ export default function Navbar() {
                       <div className="border-t border-gray-100">
                         <button
                           onClick={handleLogout}
-                          className="group flex items-center w-full px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors"
+                          className="group flex items-center w-full px-4 py-3 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 transition-all duration-200"
                         >
                           <LogOut className="mr-3 h-5 w-5" />
                           Logout
@@ -256,7 +265,7 @@ export default function Navbar() {
                 {/* Create Event CTA */}
                 <Link
                   href="/events/new"
-                  className="bg-gradient-to-r from-[#FBBF24] to-[#F97316] text-[#0B1120] px-5 py-2.5 rounded-xl font-semibold hover:shadow-lg hover:shadow-orange-500/25 hover:-translate-y-0.5 transition-all duration-300"
+                  className="bg-gradient-to-r from-[#FBBF24] to-[#F97316] text-[#0B1120] px-5 py-2.5 rounded-xl font-semibold hover:brightness-110 hover:scale-105 hover:shadow-lg hover:shadow-orange-500/30 active:shadow-[0_0_30px_rgba(245,158,11,0.5)] active:scale-95 transition-all duration-200 ease-in-out"
                 >
                   + Create Event
                 </Link>
@@ -271,7 +280,7 @@ export default function Navbar() {
                 </Link>
                 <Link
                   href="/signup"
-                  className="px-5 py-2.5 bg-gradient-to-r from-[#FBBF24] to-[#F97316] text-[#0B1120] rounded-xl font-semibold hover:shadow-lg hover:shadow-orange-500/25 hover:-translate-y-0.5 transition-all duration-300"
+                  className="px-5 py-2.5 bg-gradient-to-r from-[#FBBF24] to-[#F97316] text-[#0B1120] rounded-xl font-semibold hover:brightness-110 hover:scale-105 hover:shadow-lg hover:shadow-orange-500/30 active:shadow-[0_0_30px_rgba(245,158,11,0.5)] active:scale-95 transition-all duration-200 ease-in-out"
                 >
                   Sign Up
                 </Link>
@@ -364,7 +373,7 @@ export default function Navbar() {
                 <Link
                   href="/events/new"
                   onClick={closeMenus}
-                  className="flex items-center justify-center gap-2 px-4 py-3 mt-3 bg-gradient-to-r from-[#FBBF24] to-[#F97316] text-[#0B1120] rounded-xl font-semibold shadow-lg"
+                  className="flex items-center justify-center gap-2 px-4 py-3 mt-3 bg-gradient-to-r from-[#FBBF24] to-[#F97316] text-[#0B1120] rounded-xl font-semibold shadow-lg hover:brightness-110 hover:scale-[1.02] active:shadow-[0_0_30px_rgba(245,158,11,0.5)] active:scale-95 transition-all duration-200 ease-in-out"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -406,7 +415,7 @@ export default function Navbar() {
                 <Link
                   href="/signup"
                   onClick={closeMenus}
-                  className="block px-4 py-3 bg-gradient-to-r from-[#FBBF24] to-[#F97316] text-[#0B1120] rounded-xl font-semibold text-center shadow-lg"
+                  className="block px-4 py-3 bg-gradient-to-r from-[#FBBF24] to-[#F97316] text-[#0B1120] rounded-xl font-semibold text-center shadow-lg hover:brightness-110 hover:scale-[1.02] active:shadow-[0_0_30px_rgba(245,158,11,0.5)] active:scale-95 transition-all duration-200 ease-in-out"
                 >
                   Sign Up
                 </Link>

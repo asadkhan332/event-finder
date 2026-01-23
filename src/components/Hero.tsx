@@ -9,7 +9,7 @@ const Hero = () => {
       {/* Background Section - Orange/Gold Gradient Theme */}
       <div className="relative w-full overflow-hidden">
         {/* Base gradient background - Orange to Amber (matching Create Event button) */}
-        <div className="absolute inset-0 bg-gradient-to-br from-orange-500 via-amber-500 to-yellow-400" />
+        <div className="absolute inset-0 bg-gradient-to-br from-orange-500 via-amber-500 to-orange-600" />
 
         {/* Animated Mesh Gradient Blobs - Warm tones */}
         {/* Blob 1 - Top Left - Deep Orange */}
@@ -105,7 +105,7 @@ const Hero = () => {
         {/* Hero Content - White/Cream text for contrast on warm background */}
         <div className="relative flex flex-col items-center justify-center text-center px-4 py-20 md:py-32">
           <motion.h1
-            className="text-4xl md:text-7xl font-bold text-white mb-4 md:mb-6 tracking-tight font-['Playfair_Display',serif] max-w-3xl drop-shadow-lg"
+            className="text-4xl md:text-7xl font-bold text-white mb-4 md:mb-6 tracking-tight font-['Playfair_Display',serif] max-w-3xl drop-shadow-sm"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
@@ -113,7 +113,7 @@ const Hero = () => {
             Discover Pakistan's Vibrant Events
           </motion.h1>
           <motion.p
-            className="text-lg md:text-2xl text-white/90 max-w-2xl font-medium font-['Inter',sans-serif] drop-shadow-md"
+            className="text-lg md:text-2xl text-white/90 max-w-2xl font-medium font-['Inter',sans-serif] drop-shadow-sm"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}

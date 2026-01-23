@@ -141,6 +141,7 @@ event-finder/
 - [x] Hero section with mesh gradient and Framer Motion breathing animation
 - [x] Hero orange/gold gradient theme (matching Create Event button)
 - [x] Professional Profile dropdown with white theme and Lucide icons
+- [x] Button glow and press effects (hover:scale-105, active:glow, active:scale-95)
 
 ---
 
