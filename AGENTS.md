@@ -16,6 +16,7 @@ A web application to discover and manage local events, built with Next.js, Tailw
 |-------|------------|
 | **Frontend** | Next.js 16 (App Router), React, TypeScript |
 | **Styling** | Tailwind CSS |
+| **Animations** | Framer Motion |
 | **Backend** | Supabase (Database + Authentication) |
 | **Icons** | Lucide React |
 
@@ -137,6 +138,7 @@ event-finder/
 - [x] Event search and filtering
 - [x] Featured events section
 - [x] Location-based event discovery
+- [x] Hero section with mesh gradient and Framer Motion breathing animation
 
 ---
 

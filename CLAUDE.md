@@ -30,6 +30,38 @@ Prompt: "Read [skill-path]/SKILL.md and apply it to [task]"
 - **Backend tasks:** Read relevant skills from `backend-agent/backend-skills/` first
 - **Complex tasks:** Spawn sub-agents for parallel work
 
+### Subagent Transparency Rules
+
+**Always announce subagent usage to the user:**
+
+1. **Before spawning:** "Spawning [subagent_type] agent for [brief task description]"
+2. **For parallel agents:** "Spawning N agents in parallel:
+   - Agent 1: [task]
+   - Agent 2: [task]"
+3. **On completion:** Report what each agent found/did
+4. **Skill usage:** "Reading [skill-name] skill before [task]"
+
+**Example announcements:**
+```
+"Spawning Explore agent to find authentication patterns in the codebase"
+"Spawning 2 agents in parallel:
+ - Agent 1: Exploring database schema
+ - Agent 2: Checking API routes"
+"Reading tailwind-css-mastery skill before styling the navbar"
+```
+
+### Parallel Orchestration Commands
+
+Users can request parallel agent execution:
+
+```
+"In parallel, do X and Y"
+"Run these tasks simultaneously: [task1], [task2]"
+"Spawn multiple agents to: [list of tasks]"
+```
+
+When user requests parallel execution, spawn all agents in a **single response** with multiple Task tool calls.
+
 ---
 
 ## Frontend Agent Orchestration
@@ -108,6 +140,39 @@ Prompt: "Read [skill-path]/SKILL.md and apply it to [task]"
 1. Read `backend-agent/supabase-backend-architect.md` for architecture guidance
 2. Read relevant skill file(s) from `backend-agent/backend-skills/`
 3. Apply patterns and follow execution steps
+
+---
+
+## MANDATORY: Documentation Update Rules
+
+**After completing ANY task, you MUST update project documentation:**
+
+### 1. Update AGENTS.md (Universal Context)
+- **Tech Stack:** Add new dependencies/libraries installed
+- **Project Progress:** Mark completed features, add new pending tasks
+- **Project Structure:** Update if new files/folders are added
+- **Database Schema:** Update if schema changes
+
+### 2. Update CLAUDE.md (Claude-Specific)
+- **Session Log:** Add entry for significant changes made
+- **Skills Used:** Note which skills were applied
+- **New Patterns:** Document any new patterns discovered
+
+### Documentation Update Checklist
+After every task completion:
+- [ ] New dependency added? → Update AGENTS.md Tech Stack
+- [ ] Feature completed? → Update AGENTS.md Project Progress
+- [ ] New files created? → Update AGENTS.md Project Structure
+- [ ] Database changed? → Update AGENTS.md Database Schema
+- [ ] Log the change in Session Log below
+
+---
+
+## Session Log
+
+| Date | Task | Files Changed | Skills Used |
+|------|------|---------------|-------------|
+| 2026-01-23 | Hero section mesh gradient + breathing animation | `src/components/Hero.tsx`, `package.json` | ui-ux-designer, vibrant-gradient-mastery, tailwind-css-mastery |
 
 ### Code Quality Checklist
 - [ ] TypeScript types are correct (no `any` unless absolutely necessary)
