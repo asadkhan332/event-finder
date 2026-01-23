@@ -6,7 +6,17 @@ import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { Profile, Event, Attendee } from '@/lib/database.types'
 import { User } from '@supabase/supabase-js'
-import EventCard from '@/components/EventCard'
+import {
+  Camera,
+  LayoutDashboard,
+  Settings,
+  Users,
+  Calendar,
+  Star,
+  Clock,
+  MapPin,
+  X
+} from 'lucide-react'
 
 type AttendeeWithEvent = Attendee & { event: Event }
 
@@ -73,8 +83,6 @@ export default function ProfilePage() {
   }
 
   const fetchReviews = async (userId: string) => {
-    // Placeholder for reviews - assuming there's a reviews table
-    // For now, just setting to empty array
     setReviews([])
   }
 
@@ -108,14 +116,12 @@ export default function ProfilePage() {
     const file = event.target.files?.[0]
     if (!file || !user) return
 
-    // Validate file type
     const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
     if (!allowedTypes.includes(file.type)) {
       alert('Please upload an image file (JPEG, PNG, GIF, or WebP)')
       return
     }
 
-    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       alert('File size must be less than 5MB')
       return
@@ -124,12 +130,10 @@ export default function ProfilePage() {
     setUploadingAvatar(true)
 
     try {
-      // Create unique file name
       const fileExt = file.name.split('.').pop()
       const fileName = `${user.id}-${Date.now()}.${fileExt}`
       const filePath = `${fileName}`
 
-      // Upload to Supabase Storage (bucket: avatars)
       const { error: uploadError } = await supabase.storage
         .from('Avatar')
         .upload(filePath, file, {
@@ -143,12 +147,10 @@ export default function ProfilePage() {
         return
       }
 
-      // Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('Avatar')
         .getPublicUrl(filePath)
 
-      // Update profile with new avatar URL
       const { error: updateError } = await (supabase.from('profiles') as any)
         .update({ avatar_url: publicUrl, updated_at: new Date().toISOString() })
         .eq('id', user.id)
@@ -159,14 +161,12 @@ export default function ProfilePage() {
         return
       }
 
-      // Update local state
       setProfile(prev => prev ? { ...prev, avatar_url: publicUrl } : null)
     } catch (error) {
       console.error('Avatar upload error:', error)
       alert('An error occurred. Please try again.')
     } finally {
       setUploadingAvatar(false)
-      // Reset file input
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
       }
@@ -180,6 +180,25 @@ export default function ProfilePage() {
       month: 'long',
       year: 'numeric'
     })
+  }
+
+  const formatEventDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    })
+  }
+
+  const formatEventTime = (timeString: string) => {
+    if (!timeString) return ''
+    const [hours, minutes] = timeString.split(':')
+    const hour = parseInt(hours)
+    const ampm = hour >= 12 ? 'PM' : 'AM'
+    const hour12 = hour % 12 || 12
+    return `${hour12}:${minutes} ${ampm}`
   }
 
   useEffect(() => {
@@ -197,7 +216,6 @@ export default function ProfilePage() {
 
       setUser(session.user)
 
-      // Fetch profile data
       const { data: profileData, error } = await supabase
         .from('profiles')
         .select('*')
@@ -214,7 +232,6 @@ export default function ProfilePage() {
 
       setLoading(false)
 
-      // Fetch all user data in parallel
       await Promise.all([
         fetchJoinedEvents(session.user.id),
         fetchCreatedEvents(session.user.id),
@@ -228,37 +245,29 @@ export default function ProfilePage() {
 
     checkAuthAndFetchProfile()
 
-    // No auth state listener to avoid loops
     return () => {
       cancelled = true
     }
-  }, []) // Empty dependency array
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    })
-  }
+  }, [])
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center transition-colors">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#008080]"></div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0d9488]"></div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 flex flex-col">
-      {/* Header with Karachi Teal Gradient */}
-      <header className="bg-gradient-to-r from-[#008080] to-[#00a3a3] py-16 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50">
+      {/* Header Banner - Solid Teal */}
+      <header className="bg-[#0d9488] py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <div className="relative group">
-                {/* Hidden file input */}
+            {/* Profile Info */}
+            <div className="flex items-center gap-5">
+              {/* Avatar with Camera Edit Icon */}
+              <div className="relative">
                 <input
                   type="file"
                   ref={fileInputRef}
@@ -267,7 +276,6 @@ export default function ProfilePage() {
                   className="hidden"
                 />
 
-                {/* Profile Picture */}
                 {uploadingAvatar ? (
                   <div className="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center border-4 border-white shadow-xl">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
@@ -279,55 +287,49 @@ export default function ProfilePage() {
                     className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-xl"
                   />
                 ) : (
-                  <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center text-[#008080] text-4xl font-bold border-4 border-white shadow-xl">
+                  <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center text-[#0d9488] text-4xl font-bold border-4 border-white shadow-xl">
                     {profile?.full_name?.charAt(0).toUpperCase() || user?.email?.charAt(0).toUpperCase() || 'U'}
                   </div>
                 )}
 
-                {/* Camera Icon Overlay */}
+                {/* Camera Icon */}
                 <button
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploadingAvatar}
-                  className="absolute bottom-0 right-0 w-8 h-8 bg-[#008080] hover:bg-[#006666] rounded-full flex items-center justify-center border-2 border-white shadow-lg transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="absolute bottom-0 right-0 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg hover:bg-gray-100 transition-all disabled:opacity-50"
                   title="Upload profile picture"
                 >
-                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
+                  <Camera className="w-4 h-4 text-[#0d9488]" />
                 </button>
               </div>
 
+              {/* Name, Email, Member Since */}
               <div>
-                <h1 className="text-3xl font-bold text-white">
+                <h1 className="text-2xl md:text-3xl font-bold text-white">
                   {profile?.full_name || 'Anonymous User'}
                 </h1>
                 <p className="text-white/90 mt-1">{user?.email}</p>
-                <p className="text-white/80 text-sm mt-2">
+                <p className="text-white/70 text-sm mt-1">
                   Member since {formatMemberSince(profile?.created_at || user?.created_at)}
                 </p>
               </div>
             </div>
 
+            {/* Action Buttons - Ghost/Outline Style */}
             <div className="flex gap-3">
               <Link
                 href="/dashboard"
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/20 backdrop-blur-sm text-white font-semibold rounded-lg hover:bg-white/30 transition-all shadow-lg"
+                className="inline-flex items-center gap-2 px-4 py-2.5 border-2 border-white/50 text-white font-medium rounded-lg hover:bg-white/10 transition-all"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                </svg>
+                <LayoutDashboard className="w-5 h-5" />
                 Dashboard
               </Link>
 
               <button
                 onClick={() => setShowSettingsModal(true)}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white/20 backdrop-blur-sm text-white font-semibold rounded-lg hover:bg-white/30 transition-all shadow-lg"
+                className="inline-flex items-center gap-2 px-4 py-2.5 border-2 border-white/50 text-white font-medium rounded-lg hover:bg-white/10 transition-all"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
+                <Settings className="w-5 h-5" />
                 Settings
               </button>
             </div>
@@ -335,82 +337,63 @@ export default function ProfilePage() {
         </div>
       </header>
 
-      <main className="flex-1 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 w-full">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-xl">
-            <div className="flex items-center gap-4">
-              <div className="bg-[#008080]/20 p-3 rounded-xl">
-                <svg className="w-8 h-8 text-[#008080]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
+      <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Stats Cards Grid - White Background with Shadow */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+          {/* Events Joined */}
+          <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-lg transition-shadow">
+            <div className="flex flex-col items-center text-center">
+              <div className="w-14 h-14 bg-teal-50 rounded-full flex items-center justify-center mb-4">
+                <Users className="w-7 h-7 text-[#0d9488]" />
               </div>
-              <div>
-                <h3 className="text-2xl font-bold text-white">{joinedEventsCount}</h3>
-                <p className="text-white/70">Events Joined</p>
-              </div>
+              <h3 className="text-3xl font-bold text-gray-900">{joinedEventsCount}</h3>
+              <p className="text-gray-500 mt-1">Events Joined</p>
             </div>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-xl">
-            <div className="flex items-center gap-4">
-              <div className="bg-[#008080]/20 p-3 rounded-xl">
-                <svg className="w-8 h-8 text-[#008080]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
+          {/* Events Created */}
+          <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-lg transition-shadow">
+            <div className="flex flex-col items-center text-center">
+              <div className="w-14 h-14 bg-teal-50 rounded-full flex items-center justify-center mb-4">
+                <Calendar className="w-7 h-7 text-[#0d9488]" />
               </div>
-              <div>
-                <h3 className="text-2xl font-bold text-white">{createdEventsCount}</h3>
-                <p className="text-white/70">Events Created</p>
-              </div>
+              <h3 className="text-3xl font-bold text-gray-900">{createdEventsCount}</h3>
+              <p className="text-gray-500 mt-1">Events Created</p>
             </div>
           </div>
 
-          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-xl">
-            <div className="flex items-center gap-4">
-              <div className="bg-[#008080]/20 p-3 rounded-xl">
-                <svg className="w-8 h-8 text-[#008080]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                </svg>
+          {/* Total Reviews */}
+          <div className="bg-white rounded-2xl p-6 shadow-md hover:shadow-lg transition-shadow">
+            <div className="flex flex-col items-center text-center">
+              <div className="w-14 h-14 bg-teal-50 rounded-full flex items-center justify-center mb-4">
+                <Star className="w-7 h-7 text-[#0d9488]" />
               </div>
-              <div>
-                <h3 className="text-2xl font-bold text-white">{reviews.length}</h3>
-                <p className="text-white/70">Total Reviews</p>
-              </div>
+              <h3 className="text-3xl font-bold text-gray-900">{reviews.length}</h3>
+              <p className="text-gray-500 mt-1">Total Reviews</p>
             </div>
           </div>
         </div>
 
-        {/* Joined Events Grid */}
-        <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-xl mb-8">
+        {/* Events Joined Section */}
+        <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-white">Events Joined</h2>
-            <span className="text-white/70">{joinedEvents.length} events</span>
+            <h2 className="text-2xl font-bold text-gray-900">Events Joined</h2>
+            <span className="text-gray-500">{joinedEvents.length} events</span>
           </div>
 
           {eventsLoading ? (
             <div className="flex justify-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#008080]"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#0d9488]"></div>
             </div>
           ) : joinedEvents.length === 0 ? (
-            <div className="text-center py-12">
-              <svg
-                className="mx-auto h-16 w-16 text-white/50"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-              </svg>
-              <p className="mt-4 text-white/70">You haven't joined any events yet.</p>
+            <div className="bg-white rounded-2xl p-12 shadow-md text-center">
+              <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Users className="w-10 h-10 text-gray-400" />
+              </div>
+              <p className="text-gray-500 mb-4">You haven't joined any events yet.</p>
               <Link
                 href="/"
-                className="mt-4 inline-block bg-[#008080] text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#006666] transition-colors"
+                className="inline-block bg-[#0d9488] text-white px-6 py-3 rounded-xl font-semibold hover:bg-[#0b7a6e] transition-colors"
               >
                 Browse Events
               </Link>
@@ -418,10 +401,60 @@ export default function ProfilePage() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {joinedEvents.map((event) => (
-                <div key={event.id} className="relative">
-                  <EventCard event={event} />
-                  <div className="absolute top-4 left-4 bg-[#008080] text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                    Joined
+                <div key={event.id} className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                  {/* Event Image with Joined Badge */}
+                  <div className="relative h-48">
+                    {event.image_url ? (
+                      <img
+                        src={event.image_url}
+                        alt={event.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center">
+                        <Calendar className="w-16 h-16 text-white/50" />
+                      </div>
+                    )}
+                    {/* Joined Badge */}
+                    <div className="absolute top-3 left-3 bg-[#0d9488] text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
+                      Joined
+                    </div>
+                  </div>
+
+                  {/* Event Details */}
+                  <div className="p-5">
+                    <h3 className="font-bold text-lg text-gray-900 mb-3 line-clamp-1">
+                      {event.title}
+                    </h3>
+
+                    {/* Date & Time */}
+                    <div className="flex items-center gap-2 text-gray-600 text-sm mb-2">
+                      <Calendar className="w-4 h-4 text-[#0d9488]" />
+                      <span>{formatEventDate(event.date)}</span>
+                    </div>
+
+                    {event.time && (
+                      <div className="flex items-center gap-2 text-gray-600 text-sm mb-2">
+                        <Clock className="w-4 h-4 text-[#0d9488]" />
+                        <span>{formatEventTime(event.time)}</span>
+                      </div>
+                    )}
+
+                    {/* Location */}
+                    {event.location_name && (
+                      <div className="flex items-center gap-2 text-gray-600 text-sm mb-4">
+                        <MapPin className="w-4 h-4 text-[#0d9488]" />
+                        <span className="line-clamp-1">{event.location_name}</span>
+                      </div>
+                    )}
+
+                    {/* View Details Button - Orange */}
+                    <Link
+                      href={`/events/${event.id}`}
+                      className="block w-full bg-orange-600 hover:bg-orange-700 text-white text-center py-3 rounded-xl font-semibold transition-colors"
+                    >
+                      View Details
+                    </Link>
                   </div>
                 </div>
               ))}
@@ -432,31 +465,33 @@ export default function ProfilePage() {
         {/* Settings Modal */}
         {showSettingsModal && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl p-6 shadow-2xl max-w-md w-full">
+            <div className="bg-white rounded-2xl p-6 shadow-2xl max-w-md w-full">
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-xl font-bold text-white">Account Settings</h3>
+                <h3 className="text-xl font-bold text-gray-900">Account Settings</h3>
                 <button
                   onClick={() => setShowSettingsModal(false)}
-                  className="text-white/70 hover:text-white"
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                  <X className="w-6 h-6" />
                 </button>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <Link
                   href="/profile/edit"
-                  className="block w-full text-left px-4 py-3 bg-white/10 hover:bg-white/20 rounded-xl text-white transition-colors"
+                  className="flex items-center gap-3 w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-xl text-gray-700 transition-colors"
                 >
+                  <Settings className="w-5 h-5 text-gray-500" />
                   Edit Profile
                 </Link>
 
                 <Link
                   href="/profile/security"
-                  className="block w-full text-left px-4 py-3 bg-white/10 hover:bg-white/20 rounded-xl text-white transition-colors"
+                  className="flex items-center gap-3 w-full px-4 py-3 bg-gray-50 hover:bg-gray-100 rounded-xl text-gray-700 transition-colors"
                 >
+                  <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                  </svg>
                   Security Settings
                 </Link>
 
@@ -465,8 +500,11 @@ export default function ProfilePage() {
                     await supabase.auth.signOut()
                     router.push('/')
                   }}
-                  className="w-full text-left px-4 py-3 bg-red-500/20 hover:bg-red-500/30 rounded-xl text-red-200 transition-colors"
+                  className="flex items-center gap-3 w-full px-4 py-3 bg-red-50 hover:bg-red-100 rounded-xl text-red-600 transition-colors"
                 >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
                   Logout
                 </button>
               </div>
