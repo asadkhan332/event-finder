@@ -14,6 +14,13 @@ type MinimalSession = {
   }
 } | null
 
+// Extend Window interface to include our custom event
+declare global {
+  interface WindowEventMap {
+    'profileUpdated': CustomEvent<{ fullName: string | null; avatarUrl: string | null }>;
+  }
+}
+
 export default function Navbar() {
   const [session, setSession] = useState<MinimalSession>(null)
   const [userName, setUserName] = useState<string | null>(null)
@@ -89,6 +96,22 @@ export default function Navbar() {
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
+
+  // Listen for profile updates
+  useEffect(() => {
+    const handleProfileUpdate = (event: CustomEvent) => {
+      const { fullName, avatarUrl } = event.detail
+      if (session?.user) {
+        setUserName(fullName)
+        setAvatarUrl(avatarUrl)
+      }
+    }
+
+    window.addEventListener('profileUpdated', handleProfileUpdate as EventListener)
+    return () => {
+      window.removeEventListener('profileUpdated', handleProfileUpdate as EventListener)
+    }
+  }, [session])
 
   // Logout - uses window.location for clean redirect
   const handleLogout = async () => {
@@ -239,7 +262,7 @@ export default function Navbar() {
                         </Link>
 
                         <Link
-                          href="/profile"
+                          href="/profile/settings"
                           onClick={closeMenus}
                           className="group flex items-center px-4 py-2.5 text-sm text-gray-700 hover:bg-orange-50 transition-all duration-200"
                         >
