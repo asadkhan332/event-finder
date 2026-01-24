@@ -156,6 +156,10 @@ event-finder/
 - [x] Host dashboard (`/dashboard/host`) with orange theme
 - [x] Middleware for auth protection and role-based redirects
 - [x] UserRole type and role column in profiles table
+- [x] Create Event form redesign with orange/teal theme, rounded-2xl cards, category grid
+- [x] Event image upload to Supabase Event-images bucket with progress indicator
+- [x] Celebration toast notification on event creation success
+- [x] Host-only access to Create Event page
 
 ---
 
