@@ -32,7 +32,11 @@ event-finder/
 │   │   ├── page.tsx            # Event list page
 │   │   ├── globals.css
 │   │   ├── dashboard/
-│   │   │   └── page.tsx        # Organizer dashboard
+│   │   │   ├── page.tsx        # Organizer dashboard
+│   │   │   └── host/
+│   │   │       └── page.tsx    # Host-specific dashboard
+│   │   ├── role-selection/
+│   │   │   └── page.tsx        # Role selection page (seeker/host)
 │   │   ├── login/
 │   │   │   └── page.tsx        # Login page
 │   │   ├── signup/
@@ -54,10 +58,11 @@ event-finder/
 │   │   └── AttendeeButton.tsx  # Attendee button component
 │   ├── hooks/
 │   │   └── useGeolocation.ts   # Browser geolocation hook
-│   └── lib/
-│       ├── supabase.ts         # Supabase client
-│       ├── location.ts         # Location utilities & distance calc
-│       └── database.types.ts   # TypeScript types
+│   ├── lib/
+│   │   ├── supabase.ts         # Supabase client
+│   │   ├── location.ts         # Location utilities & distance calc
+│   │   └── database.types.ts   # TypeScript types
+│   └── middleware.ts           # Auth & role protection middleware
 ├── supabase/
 │   ├── migrations/
 │   │   └── 20260109000000_initial_schema.sql
@@ -83,6 +88,7 @@ event-finder/
 | email      | TEXT        | User's email (unique)          |
 | full_name  | TEXT        | User's full name               |
 | avatar_url | TEXT        | URL to profile picture         |
+| role       | TEXT        | User role: 'seeker' or 'host'  |
 | created_at | TIMESTAMPTZ | Record creation timestamp      |
 | updated_at | TIMESTAMPTZ | Record update timestamp        |
 
@@ -146,6 +152,10 @@ event-finder/
 - [x] Settings page implementation with profile name and photo update functionality
 - [x] Supabase integration for avatar uploads to storage and profile data updates
 - [x] Cross-component communication for real-time profile updates across the app
+- [x] Role selection page (`/role-selection`) with seeker/host options
+- [x] Host dashboard (`/dashboard/host`) with orange theme
+- [x] Middleware for auth protection and role-based redirects
+- [x] UserRole type and role column in profiles table
 
 ---
 
@@ -264,3 +274,10 @@ This project uses a modular skill system for AI agents. Skills are reusable inst
 - Browser geolocation for distance calculation
 - Events sortable by distance
 - Location stored as lat/long coordinates
+
+### Role System
+- Users select role on first login: 'seeker' or 'host'
+- Middleware redirects users without role to `/role-selection`
+- Seekers: Browse and attend events (redirect to `/`)
+- Hosts: Create and manage events (redirect to `/dashboard/host`)
+- Role stored in profiles.role column

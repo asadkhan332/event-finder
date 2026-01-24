@@ -59,7 +59,7 @@ export default function SettingsPage() {
         .from('profiles')
         .select('*')
         .eq('id', session.user.id)
-        .maybeSingle()
+        .maybeSingle() as { data: Profile | null; error: any }
 
       if (cancelled) return
 
@@ -67,7 +67,7 @@ export default function SettingsPage() {
         console.error('Error fetching profile:', error)
         toast.error('Failed to load profile')
       } else if (profileData) {
-        setProfile(profileData as Profile)
+        setProfile(profileData)
         setFullName(profileData.full_name || '')
         setAvatarUrl(profileData.avatar_url || null)
       }
