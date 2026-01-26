@@ -18,7 +18,6 @@ async function getFeaturedEvents(): Promise<Event[]> {
     .limit(5)
 
   if (error) {
-    console.error('Error fetching featured events:', error)
     return []
   }
 
@@ -99,7 +98,6 @@ async function getEvents(searchParams: SearchParams): Promise<Event[]> {
   const { data: events, error } = await query
 
   if (error) {
-    console.error('Error fetching events:', error)
     return []
   }
 
