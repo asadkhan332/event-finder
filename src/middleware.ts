@@ -61,8 +61,11 @@ export async function middleware(request: NextRequest) {
   const publicRoutes = ['/login', '/signup', '/forgot-password', '/reset-password', '/auth/callback']
   const isPublicRoute = publicRoutes.some(route => pathname.startsWith(route))
 
+  // Routes that are viewable without authentication (public content)
+  const isPublicViewRoute = pathname === '/' || pathname.startsWith('/events/')
+
   // If user is not logged in and trying to access protected route
-  if (!session && !isPublicRoute && pathname !== '/') {
+  if (!session && !isPublicRoute && !isPublicViewRoute) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
@@ -80,8 +83,8 @@ export async function middleware(request: NextRequest) {
       .eq('id', session.user.id)
       .maybeSingle()
 
-    // If user has no role set and is not on role-selection, redirect to role-selection
-    if (!profile?.role && !isPublicRoute && pathname !== '/') {
+    // If user has no role set and is not on role-selection or public view routes, redirect to role-selection
+    if (!profile?.role && !isPublicRoute && !isPublicViewRoute) {
       return NextResponse.redirect(new URL('/role-selection', request.url))
     }
 
