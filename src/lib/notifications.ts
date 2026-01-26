@@ -64,11 +64,11 @@ export async function createNotification(
 ): Promise<{ data: Notification | null; error: Error | null }> {
   const { data, error } = await supabase
     .from('notifications')
-    .insert(notification)
+    .insert(notification as never)
     .select()
     .single()
 
-  return { data, error: error ? new Error(error.message) : null }
+  return { data: data as Notification | null, error: error ? new Error(error.message) : null }
 }
 
 // Get user's notifications with event details
@@ -133,13 +133,13 @@ export async function markAsRead(
     .update({
       is_read: true,
       read_at: new Date().toISOString()
-    })
+    } as never)
     .eq('id', notificationId)
     .eq('user_id', userId)
     .select()
     .single()
 
-  return { data, error: error ? new Error(error.message) : null }
+  return { data: data as Notification | null, error: error ? new Error(error.message) : null }
 }
 
 // Mark all notifications as read
@@ -149,7 +149,7 @@ export async function markAllAsRead(userId: string): Promise<{ error: Error | nu
     .update({
       is_read: true,
       read_at: new Date().toISOString()
-    })
+    } as never)
     .eq('user_id', userId)
     .eq('is_read', false)
 
@@ -202,11 +202,11 @@ export async function getOrCreatePreferences(
       .insert({
         user_id: userId,
         ...DEFAULT_PREFERENCES
-      })
+      } as never)
       .select()
       .single()
 
-    return { data: created, error: createError ? new Error(createError.message) : null }
+    return { data: created as NotificationPreference | null, error: createError ? new Error(createError.message) : null }
   }
 
   return { data: null, error: fetchError ? new Error(fetchError.message) : null }
@@ -222,11 +222,11 @@ export async function updatePreferences(
     .upsert({
       user_id: userId,
       ...updates
-    }, { onConflict: 'user_id' })
+    } as never, { onConflict: 'user_id' })
     .select()
     .single()
 
-  return { data, error: error ? new Error(error.message) : null }
+  return { data: data as NotificationPreference | null, error: error ? new Error(error.message) : null }
 }
 
 // Notification template formatters
@@ -320,19 +320,20 @@ export async function notifyEventAttendees(
     return { count: 0, error: new Error(fetchError.message) }
   }
 
-  if (!attendees || attendees.length === 0) {
+  const attendeeList = attendees as { user_id: string }[] | null
+  if (!attendeeList || attendeeList.length === 0) {
     return { count: 0, error: null }
   }
 
   // Create notifications for all attendees
-  const notifications = attendees.map(attendee => ({
+  const notifications = attendeeList.map(attendee => ({
     ...notificationTemplate,
     user_id: attendee.user_id
   }))
 
   const { error: insertError } = await supabase
     .from('notifications')
-    .insert(notifications)
+    .insert(notifications as never)
 
   return {
     count: notifications.length,
@@ -381,21 +382,24 @@ export async function createNotificationWithPrefCheck(
 
     if (prefs?.email_enabled) {
       // Get user email and name
-      const { data: profile } = await supabase
+      const { data: profileData } = await supabase
         .from('profiles')
         .select('email, full_name')
         .eq('id', notification.user_id)
         .single()
 
+      const profile = profileData as { email: string; full_name: string | null } | null
+
       if (profile?.email) {
         // Get event details if event_id is present
         let eventDetails: { title: string; date: string; time: string; location_name: string } | undefined
         if (notification.event_id) {
-          const { data: event } = await supabase
+          const { data: eventData } = await supabase
             .from('events')
             .select('title, date, time, location_name')
             .eq('id', notification.event_id)
             .single()
+          const event = eventData as { title: string; date: string; time: string; location_name: string } | null
           if (event) {
             eventDetails = event
           }

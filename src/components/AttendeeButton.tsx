@@ -116,11 +116,8 @@ export default function AttendeeButton({ eventId }: AttendeeButtonProps) {
         // Create cancellation notification (T018) with preference check (T028)
         if (eventDetails) {
           const notification = formatConfirmationNotification(
-            eventDetails.title,
-            eventDetails.date,
-            eventDetails.time,
-            eventDetails.location_name,
-            true // isCancellation
+            { id: eventId, ...eventDetails },
+            'cancel'
           )
           await createNotificationWithPrefCheck({
             user_id: user.id,
@@ -154,11 +151,8 @@ export default function AttendeeButton({ eventId }: AttendeeButtonProps) {
         // Create confirmation notification (T017) with preference check (T028)
         if (eventDetails) {
           const notification = formatConfirmationNotification(
-            eventDetails.title,
-            eventDetails.date,
-            eventDetails.time,
-            eventDetails.location_name,
-            false // not a cancellation
+            { id: eventId, ...eventDetails },
+            'rsvp'
           )
           await createNotificationWithPrefCheck({
             user_id: user.id,

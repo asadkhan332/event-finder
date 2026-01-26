@@ -67,12 +67,12 @@ export default function DeleteEventButton({
       }
 
       // Step 1: Notify all attendees about cancellation BEFORE deleting (T023)
-      const notification = formatCancellationNotification(
-        eventTitle,
-        eventDate,
-        eventTime,
-        eventLocation
-      )
+      const notification = formatCancellationNotification({
+        id: eventId,
+        title: eventTitle,
+        date: eventDate,
+        time: eventTime
+      })
 
       await notifyEventAttendees(eventId, {
         type: 'cancellation',

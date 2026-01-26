@@ -272,24 +272,22 @@ export default function EditEventPage({ params }: Props) {
       }
 
       // Check for significant changes and notify attendees (T022)
-      const changes: string[] = []
+      const changes: Record<string, { old: string; new: string }> = {}
       if (formData.date !== originalData.date) {
-        changes.push(`Date changed from ${originalData.date} to ${formData.date}`)
+        changes.date = { old: originalData.date, new: formData.date }
       }
       if (formData.time !== originalData.time) {
-        changes.push(`Time changed from ${originalData.time} to ${formData.time}`)
+        changes.time = { old: originalData.time, new: formData.time }
       }
       if (formData.location_name !== originalData.location_name) {
-        changes.push(`Location changed from "${originalData.location_name}" to "${formData.location_name}"`)
+        changes.location = { old: originalData.location_name, new: formData.location_name }
       }
 
       // If there are significant changes, notify all attendees
-      if (changes.length > 0) {
+      const changeCount = Object.keys(changes).length
+      if (changeCount > 0) {
         const notification = formatUpdateNotification(
-          formData.title,
-          formData.date,
-          formData.time,
-          formData.location_name,
+          { id: eventId, title: formData.title },
           changes
         )
 
@@ -300,7 +298,7 @@ export default function EditEventPage({ params }: Props) {
           metadata: { changes }
         })
 
-        toast.success(`Event updated! ${changes.length} change(s) notified to attendees.`, {
+        toast.success(`Event updated! ${changeCount} change(s) notified to attendees.`, {
           icon: '📢',
           duration: 4000
         })
