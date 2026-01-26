@@ -189,7 +189,15 @@ export default async function EventDetailPage({ params }: Props) {
               <EditEventButton eventId={event.id} organizerId={event.organizer_id} />
             </div>
 
-            <DeleteEventButton eventId={event.id} organizerId={event.organizer_id} imageUrl={event.image_url} />
+            <DeleteEventButton
+              eventId={event.id}
+              organizerId={event.organizer_id}
+              imageUrl={event.image_url}
+              eventTitle={event.title}
+              eventDate={event.date}
+              eventTime={event.time}
+              eventLocation={event.location_name}
+            />
 
             <ReviewSection eventId={event.id} />
           </div>

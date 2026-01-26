@@ -3,9 +3,18 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { User } from '@supabase/supabase-js'
+import { createNotificationWithPrefCheck, formatConfirmationNotification } from '@/lib/notifications'
+import toast from 'react-hot-toast'
 
 type AttendeeButtonProps = {
   eventId: string
+}
+
+type EventDetails = {
+  title: string
+  date: string
+  time: string
+  location_name: string
 }
 
 export default function AttendeeButton({ eventId }: AttendeeButtonProps) {
@@ -14,6 +23,7 @@ export default function AttendeeButton({ eventId }: AttendeeButtonProps) {
   const [attendeeCount, setAttendeeCount] = useState(0)
   const [loading, setLoading] = useState(true)
   const [processing, setProcessing] = useState(false)
+  const [eventDetails, setEventDetails] = useState<EventDetails | null>(null)
 
   useEffect(() => {
     // Check auth
@@ -36,6 +46,19 @@ export default function AttendeeButton({ eventId }: AttendeeButtonProps) {
 
   const fetchAttendeeData = async () => {
     setLoading(true)
+
+    // Get event details for notifications
+    const { data: eventData, error: eventError } = await supabase
+      .from('events')
+      .select('title, date, time, location_name')
+      .eq('id', eventId)
+      .single()
+
+    if (eventError) {
+      console.error('Error fetching event details:', eventError)
+    } else {
+      setEventDetails(eventData)
+    }
 
     // Get total count
     const { count, error: countError } = await supabase
@@ -89,6 +112,31 @@ export default function AttendeeButton({ eventId }: AttendeeButtonProps) {
 
         setIsGoing(false)
         setAttendeeCount(prev => Math.max(0, prev - 1))
+
+        // Create cancellation notification (T018) with preference check (T028)
+        if (eventDetails) {
+          const notification = formatConfirmationNotification(
+            eventDetails.title,
+            eventDetails.date,
+            eventDetails.time,
+            eventDetails.location_name,
+            true // isCancellation
+          )
+          await createNotificationWithPrefCheck({
+            user_id: user.id,
+            event_id: eventId,
+            type: 'confirmation',
+            title: notification.title,
+            message: notification.message,
+            metadata: { action: 'cancelled' }
+          })
+        }
+
+        // Show cancellation toast (T019)
+        toast.success('You have cancelled your RSVP', {
+          icon: '👋',
+          duration: 3000
+        })
       } else {
         // Add attendance
         const { error } = await supabase
@@ -102,10 +150,35 @@ export default function AttendeeButton({ eventId }: AttendeeButtonProps) {
 
         setIsGoing(true)
         setAttendeeCount(prev => prev + 1)
+
+        // Create confirmation notification (T017) with preference check (T028)
+        if (eventDetails) {
+          const notification = formatConfirmationNotification(
+            eventDetails.title,
+            eventDetails.date,
+            eventDetails.time,
+            eventDetails.location_name,
+            false // not a cancellation
+          )
+          await createNotificationWithPrefCheck({
+            user_id: user.id,
+            event_id: eventId,
+            type: 'confirmation',
+            title: notification.title,
+            message: notification.message,
+            metadata: { action: 'confirmed' }
+          })
+        }
+
+        // Show confirmation toast (T019)
+        toast.success(`You're going to ${eventDetails?.title || 'this event'}!`, {
+          icon: '🎉',
+          duration: 4000
+        })
       }
     } catch (error) {
       console.error('Error updating attendance:', error)
-      alert('Failed to update attendance. Please try again.')
+      toast.error('Failed to update attendance. Please try again.')
     } finally {
       setProcessing(false)
     }

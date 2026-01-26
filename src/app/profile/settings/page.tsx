@@ -14,8 +14,10 @@ import {
   Mail,
   Save,
   Loader2,
-  X
+  X,
+  Bell
 } from 'lucide-react'
+import NotificationPreferences from '@/components/NotificationPreferences'
 
 // Extend Window interface to include our custom event
 declare global {
@@ -383,6 +385,13 @@ export default function SettingsPage() {
             </Link>
           </div>
         </div>
+
+        {/* Notification Preferences Section */}
+        {user && (
+          <div className="bg-white rounded-2xl shadow-md p-6 sm:p-8 mt-6">
+            <NotificationPreferences userId={user.id} />
+          </div>
+        )}
 
         {/* Additional Info */}
         <div className="mt-6 text-center text-sm text-gray-500">

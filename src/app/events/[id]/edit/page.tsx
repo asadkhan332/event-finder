@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import { Event } from '@/lib/database.types'
+import { notifyEventAttendees, formatUpdateNotification } from '@/lib/notifications'
+import toast from 'react-hot-toast'
 
 const categories = [
   'Music',
@@ -42,6 +44,14 @@ export default function EditEventPage({ params }: Props) {
     time: '18:00',
     location_name: '',
     category: 'Community'
+  })
+
+  // Track original values for change detection (T022)
+  const [originalData, setOriginalData] = useState({
+    title: '',
+    date: '',
+    time: '',
+    location_name: ''
   })
 
   useEffect(() => {
@@ -87,6 +97,14 @@ export default function EditEventPage({ params }: Props) {
           time: typedEvent.time,
           location_name: typedEvent.location_name,
           category: typedEvent.category
+        })
+
+        // Store original values for change detection (T022)
+        setOriginalData({
+          title: typedEvent.title,
+          date: typedEvent.date,
+          time: typedEvent.time,
+          location_name: typedEvent.location_name
         })
 
         if (typedEvent.image_url) {
@@ -251,6 +269,46 @@ export default function EditEventPage({ params }: Props) {
 
       if (updateError) {
         throw new Error(`Database error: ${updateError.message}`)
+      }
+
+      // Check for significant changes and notify attendees (T022)
+      const changes: string[] = []
+      if (formData.date !== originalData.date) {
+        changes.push(`Date changed from ${originalData.date} to ${formData.date}`)
+      }
+      if (formData.time !== originalData.time) {
+        changes.push(`Time changed from ${originalData.time} to ${formData.time}`)
+      }
+      if (formData.location_name !== originalData.location_name) {
+        changes.push(`Location changed from "${originalData.location_name}" to "${formData.location_name}"`)
+      }
+
+      // If there are significant changes, notify all attendees
+      if (changes.length > 0) {
+        const notification = formatUpdateNotification(
+          formData.title,
+          formData.date,
+          formData.time,
+          formData.location_name,
+          changes
+        )
+
+        await notifyEventAttendees(eventId, {
+          type: 'update',
+          title: notification.title,
+          message: notification.message,
+          metadata: { changes }
+        })
+
+        toast.success(`Event updated! ${changes.length} change(s) notified to attendees.`, {
+          icon: '📢',
+          duration: 4000
+        })
+      } else {
+        toast.success('Event updated successfully!', {
+          icon: '✅',
+          duration: 3000
+        })
       }
 
       router.push(`/events/${eventId}`)

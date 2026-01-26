@@ -41,13 +41,15 @@ event-finder/
 │   │   │   └── page.tsx        # Login page
 │   │   ├── signup/
 │   │   │   └── page.tsx        # Signup page
-│   │   └── events/
-│   │       ├── new/
-│   │       │   └── page.tsx    # Create event page
-│   │       └── [id]/
-│   │           ├── page.tsx    # Event detail page
-│   │           └── edit/
-│   │               └── page.tsx # Edit event page
+│   │   ├── events/
+│   │   │   ├── new/
+│   │   │   │   └── page.tsx    # Create event page
+│   │   │   └── [id]/
+│   │   │       ├── page.tsx    # Event detail page
+│   │   │       └── edit/
+│   │   │           └── page.tsx # Edit event page
+│   │   └── notifications/
+│   │       └── page.tsx        # Full notification history page
 │   ├── components/
 │   │   ├── EventCard.tsx       # Event card component
 │   │   ├── EventFilters.tsx    # Search and filter component
@@ -55,17 +57,29 @@ event-finder/
 │   │   ├── FeaturedEvents.tsx  # Featured events carousel
 │   │   ├── EditEventButton.tsx # Edit button (organizer only)
 │   │   ├── DeleteEventButton.tsx # Delete button component
-│   │   └── AttendeeButton.tsx  # Attendee button component
+│   │   ├── AttendeeButton.tsx  # Attendee button component
+│   │   ├── NotificationBell.tsx # Navbar notification bell with dropdown
+│   │   ├── NotificationItem.tsx # Single notification display
+│   │   ├── NotificationList.tsx # Scrollable notification list
+│   │   └── NotificationPreferences.tsx # Notification settings form
 │   ├── hooks/
-│   │   └── useGeolocation.ts   # Browser geolocation hook
+│   │   ├── useGeolocation.ts   # Browser geolocation hook
+│   │   └── useNotifications.ts # Real-time notification subscription
 │   ├── lib/
 │   │   ├── supabase.ts         # Supabase client
 │   │   ├── location.ts         # Location utilities & distance calc
+│   │   ├── notifications.ts    # Notification helper functions
 │   │   └── database.types.ts   # TypeScript types
 │   └── middleware.ts           # Auth & role protection middleware
 ├── supabase/
 │   ├── migrations/
-│   │   └── 20260109000000_initial_schema.sql
+│   │   ├── 20260109000000_initial_schema.sql
+│   │   └── 20260126000000_notifications.sql # Notifications tables & functions
+│   ├── functions/
+│   │   ├── schedule-reminders/ # Cron job for event reminders
+│   │   │   └── index.ts
+│   │   └── send-notification-email/ # Email delivery via Resend
+│   │       └── index.ts
 │   └── seed.sql                # Sample events data
 ├── frontend-agent/             # Frontend skill definitions
 │   └── frontend-skills/
@@ -119,6 +133,34 @@ event-finder/
 | created_at | TIMESTAMPTZ | Record creation timestamp           |
 | updated_at | TIMESTAMPTZ | Record update timestamp             |
 
+### notifications
+| Column     | Type             | Description                         |
+|------------|------------------|-------------------------------------|
+| id         | UUID (PK)        | Auto-generated                      |
+| user_id    | UUID (FK)        | References profiles(id)             |
+| event_id   | UUID (FK)        | References events(id), nullable     |
+| type       | notification_type| 'reminder','confirmation','update','cancellation' |
+| title      | TEXT             | Notification title                  |
+| message    | TEXT             | Notification message                |
+| metadata   | JSONB            | Additional data (event details, etc)|
+| is_read    | BOOLEAN          | Read status flag                    |
+| email_sent | BOOLEAN          | Email delivery status               |
+| created_at | TIMESTAMPTZ      | Record creation timestamp           |
+| read_at    | TIMESTAMPTZ      | When notification was read          |
+
+### notification_preferences
+| Column               | Type        | Description                         |
+|----------------------|-------------|-------------------------------------|
+| id                   | UUID (PK)   | Auto-generated                      |
+| user_id              | UUID (FK)   | References profiles(id), unique     |
+| email_enabled        | BOOLEAN     | Send email notifications            |
+| reminders_enabled    | BOOLEAN     | Enable event reminders              |
+| confirmations_enabled| BOOLEAN     | Enable RSVP confirmations           |
+| updates_enabled      | BOOLEAN     | Enable event update notifications   |
+| reminder_hours       | INTEGER[]   | Hours before event to remind        |
+| created_at           | TIMESTAMPTZ | Record creation timestamp           |
+| updated_at           | TIMESTAMPTZ | Record update timestamp             |
+
 ---
 
 ## Project Progress
@@ -160,6 +202,18 @@ event-finder/
 - [x] Event image upload to Supabase Event-images bucket with progress indicator
 - [x] Celebration toast notification on event creation success
 - [x] Host-only access to Create Event page
+- [x] Notification system with real-time updates via Supabase Realtime
+- [x] NotificationBell component with unread count badge and dropdown
+- [x] NotificationList and NotificationItem components
+- [x] Notifications page (`/notifications`) with filtering and pagination
+- [x] Event reminder notifications (24h and 1h before events)
+- [x] RSVP confirmation and cancellation notifications
+- [x] Event update notifications for date/time/location changes
+- [x] Event cancellation notifications for all attendees
+- [x] NotificationPreferences component in settings page
+- [x] User-configurable notification preferences (email, types, timing)
+- [x] Email notification delivery via Resend API Edge Function
+- [x] Sound and vibration alerts for new notifications
 
 ---
 

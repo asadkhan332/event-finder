@@ -4,7 +4,8 @@ import { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
-import { User, LayoutDashboard, Calendar, Plus, LogOut, Settings } from 'lucide-react'
+import { User, LayoutDashboard, Calendar, Plus, LogOut, Settings, Bell } from 'lucide-react'
+import NotificationBell from './NotificationBell'
 
 // Minimal session type to avoid importing heavy types
 type MinimalSession = {
@@ -175,6 +176,9 @@ export default function Navbar() {
                 <Link href="/dashboard" className={getLinkClasses('/dashboard')}>
                   Dashboard
                 </Link>
+
+                {/* Notification Bell */}
+                <NotificationBell userId={session?.user?.id || null} />
 
                 {/* User Dropdown with Teal Border */}
                 <div className="relative" ref={dropdownRef}>

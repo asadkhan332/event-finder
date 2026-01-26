@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
+import { notifyEventAttendees, formatCancellationNotification } from '@/lib/notifications'
+import toast from 'react-hot-toast'
 
 // Admin email that can delete any event (loaded from environment variable)
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL
@@ -11,9 +13,21 @@ type DeleteEventButtonProps = {
   eventId: string
   organizerId: string
   imageUrl: string | null
+  eventTitle: string
+  eventDate: string
+  eventTime: string
+  eventLocation: string
 }
 
-export default function DeleteEventButton({ eventId, organizerId, imageUrl }: DeleteEventButtonProps) {
+export default function DeleteEventButton({
+  eventId,
+  organizerId,
+  imageUrl,
+  eventTitle,
+  eventDate,
+  eventTime,
+  eventLocation
+}: DeleteEventButtonProps) {
   const router = useRouter()
   const [canDelete, setCanDelete] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
@@ -52,7 +66,22 @@ export default function DeleteEventButton({ eventId, organizerId, imageUrl }: De
         throw new Error('You do not have permission to delete this event')
       }
 
-      // Step 1: Delete the image from storage if it exists
+      // Step 1: Notify all attendees about cancellation BEFORE deleting (T023)
+      const notification = formatCancellationNotification(
+        eventTitle,
+        eventDate,
+        eventTime,
+        eventLocation
+      )
+
+      await notifyEventAttendees(eventId, {
+        type: 'cancellation',
+        title: notification.title,
+        message: notification.message,
+        metadata: { reason: 'Event cancelled by organizer' }
+      })
+
+      // Step 2: Delete the image from storage if it exists
       if (imageUrl) {
         // Extract the file path from the public URL
         // URL format: https://xxx.supabase.co/storage/v1/object/public/Event-images/user-id/filename.ext
@@ -73,7 +102,7 @@ export default function DeleteEventButton({ eventId, organizerId, imageUrl }: De
         }
       }
 
-      // Step 2: Delete the event from the database
+      // Step 3: Delete the event from the database
       let query = supabase.from('events').delete().eq('id', eventId)
 
       // If not admin, add organizer_id check for extra security
@@ -86,6 +115,11 @@ export default function DeleteEventButton({ eventId, organizerId, imageUrl }: De
       if (deleteError) {
         throw new Error(`Failed to delete event: ${deleteError.message}`)
       }
+
+      toast.success('Event deleted. Attendees have been notified.', {
+        icon: '🗑️',
+        duration: 4000
+      })
 
       router.push('/')
       router.refresh()

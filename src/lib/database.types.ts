@@ -71,6 +71,71 @@ export type ProfileInsert = {
   role?: UserRole
 }
 
+// Notification Types
+export type NotificationType = 'reminder' | 'confirmation' | 'update' | 'cancellation'
+
+export type Notification = {
+  id: string
+  user_id: string
+  event_id: string | null
+  type: NotificationType
+  title: string
+  message: string
+  metadata: Record<string, unknown>
+  is_read: boolean
+  email_sent: boolean
+  created_at: string
+  read_at: string | null
+}
+
+export type NotificationInsert = {
+  user_id: string
+  event_id?: string | null
+  type: NotificationType
+  title: string
+  message: string
+  metadata?: Record<string, unknown>
+}
+
+export type NotificationUpdate = {
+  is_read?: boolean
+  read_at?: string
+}
+
+export type NotificationPreference = {
+  id: string
+  user_id: string
+  email_enabled: boolean
+  reminders_enabled: boolean
+  confirmations_enabled: boolean
+  updates_enabled: boolean
+  reminder_hours: number[]
+  created_at: string
+  updated_at: string
+}
+
+export type NotificationPreferenceInsert = {
+  user_id: string
+  email_enabled?: boolean
+  reminders_enabled?: boolean
+  confirmations_enabled?: boolean
+  updates_enabled?: boolean
+  reminder_hours?: number[]
+}
+
+export type NotificationPreferenceUpdate = {
+  email_enabled?: boolean
+  reminders_enabled?: boolean
+  confirmations_enabled?: boolean
+  updates_enabled?: boolean
+  reminder_hours?: number[]
+}
+
+// Notification with event details (for display)
+export type NotificationWithEvent = Notification & {
+  event?: Pick<Event, 'id' | 'title' | 'date' | 'time' | 'location_name'> | null
+}
+
 export type Database = {
   public: {
     Tables: {
@@ -93,6 +158,16 @@ export type Database = {
         Row: Review
         Insert: Omit<Review, 'id' | 'created_at' | 'updated_at'>
         Update: Partial<Omit<Review, 'id' | 'created_at' | 'updated_at'>>
+      }
+      notifications: {
+        Row: Notification
+        Insert: NotificationInsert
+        Update: NotificationUpdate
+      }
+      notification_preferences: {
+        Row: NotificationPreference
+        Insert: NotificationPreferenceInsert
+        Update: NotificationPreferenceUpdate
       }
     }
   }
